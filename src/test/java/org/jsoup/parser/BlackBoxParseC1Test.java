@@ -441,4 +441,566 @@ public class BlackBoxParseC1Test {
                 " </body>\n" +
                 "</html>");
     }
+
+    @Test
+    public void HTMLWithInvalidMismatchedTagsAndNullBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = null;
+
+        try {
+            Jsoup.parse(html, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void HTMLWithInvalidMismatchedTagsAndEmptyBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "";
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head>\n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithInvalidMismatchedTagsAndValidExistingBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.google.com/";
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head>\n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithInvalidMismatchedTagsAndValidNonExistingBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.googleeeeeee.com/";
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head>\n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithInvalidMismatchedTagsAndMissingProtocolBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "www.google.com/";
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head>\n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithInvalidMismatchedTagsAndMissingDomainBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www/";
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head>\n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithInvalidMismatchedTagsAndWrongFormatBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.googlecom/";
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head>\n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMatchedTagsAndNullBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = null;
+
+        try {
+            Jsoup.parse(html, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void HTMLWithValidMatchedTagsAndEmptyBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMatchedTagsAndValidExistingBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.google.com/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMatchedTagsAndValidNonExistingBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.googleeeeeee.com/ ";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMatchedTagsAndMissingProtocolBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "www.google.com/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMatchedTagsAndMissingDomainBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMatchedTagsAndWrongFormatBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<h1>page1</h1>\n" +
+                "<dir><text>hi guys</text></dir>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.googlecom/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <h1>page1</h1> <dir>\n" +
+                "   <text>\n" +
+                "    hi guys\n" +
+                "   </text>\n" +
+                "  </dir>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMismatchedTagsAndNullBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<p>text<br>text3</p>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = null;
+
+        try {
+            Jsoup.parse(html, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void HTMLWithValidMismatchedTagsAndEmptyBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<p>text<br>text3</p>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <p>text<br>text3</p>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMismatchedTagsAndValidExistingBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<p>text<br>text3</p>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.google.com/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <p>text<br>text3</p>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMismatchedTagsAndValidNonExistingBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<p>text<br>text3</p>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.googleeeeeee.com/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <p>text<br>text3</p>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMismatchedTagsAndMissingProtocolBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<p>text<br>text3</p>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "www.google.com/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <p>text<br>text3</p>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMismatchedTagsAndMissingDomainBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<p>text<br>text3</p>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <p>text<br>text3</p>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void HTMLWithValidMismatchedTagsAndWrongFormatBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<p>text<br>text3</p>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.googlecom/";
+
+        Document doc = Jsoup.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> \n" +
+                "  <p>text<br>text3</p>   \n" +
+                " </body>\n" +
+                "</html>");
+    }
 }
