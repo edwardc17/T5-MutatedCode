@@ -14,6 +14,421 @@ import static org.junit.Assert.assertEquals;
 public class BlackBoxParseC2Test {
 
     @Test
+    public void fragmentHTMLWithNullAndNullContextAndNullBaseURI() {
+        String fragmentHTML = null;
+        Element context = null;
+        String baseURI = null;
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof NullPointerException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithNullAndNullContextAndEmptyBaseURI() {
+        String fragmentHTML = null;
+        Element context = null;
+        String baseURI = "";
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof NullPointerException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithNullAndNullContextAndValidExistingBaseURI() {
+        String fragmentHTML = null;
+        Element context = null;
+        String baseURI = "https://www.google.com/";
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof NullPointerException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithNullAndNullContextAndValidNonExistingBaseURI() {
+        String fragmentHTML = null;
+        Element context = null;
+        String baseURI = "https://www.googleeeeeee.com/";
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof NullPointerException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithNullAndContextAndMissingProtocolBaseURI() {
+        String fragmentHTML = null;
+        String baseURI = "www.google.com/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof NullPointerException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithNullAndContextAndMissingDomainBaseURI() {
+        String fragmentHTML = null;
+        String baseURI = "https://www/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof NullPointerException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithNullAndContextAndWrongFormatBaseURI() {
+        String fragmentHTML = null;
+        String baseURI = "https://www/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof NullPointerException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithEmptyAndContextAndNullBaseURI() {
+        String fragmentHTML = "";
+        String baseURI = null;
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithEmptyAndContextAndEmptyBaseURI() {
+        String fragmentHTML = "";
+        String baseURI = "";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertTrue(doc_Frag.isEmpty());
+    }
+
+    @Test
+    public void fragmentHTMLWithEmptyAndContextAndValidExistingBaseURI() {
+        String fragmentHTML = "";
+        String baseURI = "https://www.google.com/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertTrue(doc_Frag.isEmpty());
+    }
+
+    @Test
+    public void fragmentHTMLWithEmptyAndContextAndValidNonExistingBaseURI() {
+        String fragmentHTML = "";
+        String baseURI = "https://www.googleeeeeee.com/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertTrue(doc_Frag.isEmpty());
+    }
+
+    @Test
+    public void fragmentHTMLWithEmptyAndNullContextAndMissingProtocolBaseURI() {
+        String fragmentHTML = "";
+        String baseURI = "www.google.com/";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body></body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void fragmentHTMLWithEmptyAndNullContextAndMissingDomainBaseURI() {
+        String fragmentHTML = "";
+        String baseURI = "https://www/";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body></body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void fragmentHTMLWithEmptyAndNullContextAndWrongFormatBaseURI() {
+        String fragmentHTML = "";
+        String baseURI = "https://www.googlecom/";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body></body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void fragmentHTMLWithPlainTextAndNullContextAndNullBaseURI() {
+        String fragmentHTML = "text";
+        String baseURI = null;
+        Element context = null;
+
+        try {
+            parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithPlainTextAndNullContextAndEmptyBaseURI() {
+        String fragmentHTML = "text";
+        String baseURI = "";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body>\n" +
+                "  text\n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void fragmentHTMLWithPlainTextAndNullContextAndValidExistingBaseURI() {
+        String fragmentHTML = "text";
+        String baseURI = "https://www.google.com/";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body>\n" +
+                "  text\n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void fragmentHTMLWithPlainTextAndNullContextAndValidNonExistingBaseURI() {
+        String fragmentHTML = "text";
+        String baseURI = "https://www.googleeeeeee.com/ ";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body>\n" +
+                "  text\n" +
+                " </body>\n" +
+                "</html>");
+    }
+
+    @Test
+    public void fragmentHTMLWithPlainTextAndContextAndMissingProtocolBaseURI() {
+        String fragmentHTML = "text";
+        String baseURI = "https://www.googleeeeeee.com/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "\n" +
+                "text");
+    }
+
+    @Test
+    public void fragmentHTMLWithPlainTextAndContextAndMissingDomainBaseURI() {
+        String fragmentHTML = "text";
+        String baseURI = "https://www/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "\n" +
+                "text");
+    }
+
+    @Test
+    public void fragmentHTMLWithPlainTextAndContextAndWrongFormatBaseURI() {
+        String fragmentHTML = "text";
+        String baseURI = "https://www.googlecom/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "\n" +
+                "text");
+    }
+
+    @Test
+    public void fragmentHTMLWithOpenTagsAndContextAndNullBaseURI() {
+        String fragmentHTML = "<h1 page1</h1>";
+        String baseURI = null;
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        try {
+            List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void fragmentHTMLWithOpenTagsAndContextAndEmptyBaseURI() {
+        String fragmentHTML = "<h1 page</h1>";
+        String baseURI = "";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertTrue(doc_Frag.get(0).hasAttr("h1"));
+    }
+
+    @Test
+    public void fragmentHTMLWithOpenTagsAndContextAndValidExistingBaseURI() {
+        String fragmentHTML = "<h1 page</h1>";
+        String baseURI = "https://www.google.com/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertTrue(doc_Frag.get(0).hasAttr("h1"));
+    }
+
+    @Test
+    public void fragmentHTMLWithOpenTagsAndContextAndValidNonExistingBaseURI() {
+        String fragmentHTML = "<h1 page</h1>";
+        String baseURI = "https://www.googleeeeeee.com/";
+
+        Document doc = Parser.parse("<div class=child1>", "");
+        Element context = doc.select("div.child1").first();
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertTrue(doc_Frag.get(0).hasAttr("h1"));
+    }
+
+    @Test
+    public void fragmentHTMLWithOpenTagsAndNullContextAndValidMissingProtocolBaseURI() {
+        String fragmentHTML = "<h1 page</h1>";
+        String baseURI = "www.google.com/";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body>\n" +
+                "  <h1 page< h1></h1>\n" +
+                " </body>\n" +
+                "</html>");
+
+        assertTrue(doc_Frag.get(0).childNode(1).childNode(0).hasAttr("h1"));
+    }
+
+    @Test
+    public void fragmentHTMLWithOpenTagsAndNullContextAndValidMissingDomainBaseURI() {
+        String fragmentHTML = "<h1 page</h1>";
+        String baseURI = "https://www/";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body>\n" +
+                "  <h1 page< h1></h1>\n" +
+                " </body>\n" +
+                "</html>");
+
+        assertTrue(doc_Frag.get(0).childNode(1).childNode(0).hasAttr("h1"));
+    }
+
+    @Test
+    public void fragmentHTMLWithOpenTagsAndNullContextAndValidWrongFormatBaseURI() {
+        String fragmentHTML = "<h1 page</h1>";
+        String baseURI = "https://www.googlecom/";
+        Element context = null;
+
+        List<Node> doc_Frag = parseFragment(fragmentHTML, context, baseURI);
+
+        assertEquals(doc_Frag.get(0).toString(), "<html>\n" +
+                " <head></head>\n" +
+                " <body>\n" +
+                "  <h1 page< h1></h1>\n" +
+                " </body>\n" +
+                "</html>");
+
+        assertTrue(doc_Frag.get(0).childNode(1).childNode(0).hasAttr("h1"));
+    }
+
+    @Test
     public void FragmentHTMLWithInvalidMismatchedTagsAndNullBaseURI() {
         String fragmentHtml = "<dir><text>hi guys</dir>";
         Element context = null;
