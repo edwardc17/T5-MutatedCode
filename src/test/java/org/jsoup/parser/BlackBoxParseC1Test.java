@@ -1,6 +1,5 @@
 package org.jsoup.parser;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
 
@@ -13,7 +12,7 @@ public class BlackBoxParseC1Test {
         String html = null;
         String uri = null;
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
@@ -25,7 +24,7 @@ public class BlackBoxParseC1Test {
         String html = null;
         String uri = "";
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
@@ -37,7 +36,7 @@ public class BlackBoxParseC1Test {
         String html = null;
         String uri = "https://www.google.com/";
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
@@ -49,7 +48,7 @@ public class BlackBoxParseC1Test {
         String html = null;
         String uri = "https://www.googleeeeeee.com/";
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
@@ -61,7 +60,7 @@ public class BlackBoxParseC1Test {
         String html = null;
         String uri = "www.google.com/";
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
@@ -73,7 +72,7 @@ public class BlackBoxParseC1Test {
         String html = null;
         String uri = "https://www/";
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
@@ -85,7 +84,7 @@ public class BlackBoxParseC1Test {
         String html = null;
         String uri = "www.googlecom/";
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof NullPointerException);
@@ -97,7 +96,7 @@ public class BlackBoxParseC1Test {
         String html = "";
         String uri = null;
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
@@ -108,7 +107,7 @@ public class BlackBoxParseC1Test {
     public void HTMLEmptyUriEmptyTest() {
         String html = "";
         String uri = "";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body></body>\n" +
@@ -119,7 +118,7 @@ public class BlackBoxParseC1Test {
     public void HTMLEmptyWithValidExistedUriTest() {
         String html = "";
         String uri = "https://www.google.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body></body>\n" +
@@ -130,7 +129,7 @@ public class BlackBoxParseC1Test {
     public void HTMLEmptyWithValidNonExistedUriEmptyTest() {
         String html = "";
         String uri = "https://www.googleeeeeee.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body></body>\n" +
@@ -141,7 +140,7 @@ public class BlackBoxParseC1Test {
     public void HTMLEmptyWithInvalidMissingProtocolUriTest() {
         String html = "";
         String uri = "www.google.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body></body>\n" +
@@ -152,7 +151,7 @@ public class BlackBoxParseC1Test {
     public void HTMLEmptylWithInvalidMissingDomainUriEmptyTest() {
         String html = "";
         String uri = "https://www/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body></body>\n" +
@@ -163,7 +162,7 @@ public class BlackBoxParseC1Test {
     public void HTMLEmptyWithInvalidWrongFormatUriTest() {
         String html = "";
         String uri = "www.googlecom/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body></body>\n" +
@@ -175,7 +174,7 @@ public class BlackBoxParseC1Test {
         String html = "text";
         String uri = null;
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
@@ -186,7 +185,7 @@ public class BlackBoxParseC1Test {
     public void HTMLIsPlainTextUriEmptyTest() {
         String html = "text";
         String uri = "";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body>\n" +
@@ -199,7 +198,7 @@ public class BlackBoxParseC1Test {
     public void HTMLIsPlainTextWithValidExistedUriTest() {
         String html = "text";
         String uri = "https://www.google.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body>\n" +
@@ -212,7 +211,7 @@ public class BlackBoxParseC1Test {
     public void HTMLIsPlainTextWithValidNonExistedUriEmptyTest() {
         String html = "text";
         String uri = "https://www.googleeeeeee.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body>\n" +
@@ -225,7 +224,7 @@ public class BlackBoxParseC1Test {
     public void HTMLIsPlainTextWithInvalidMissingProtocolUriTest() {
         String html = "text";
         String uri = "www.google.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body>\n" +
@@ -238,7 +237,7 @@ public class BlackBoxParseC1Test {
     public void HTMLIsPlainTextlWithInvalidMissingDomainUriEmptyTest() {
         String html = "text";
         String uri = "https://www/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body>\n" +
@@ -251,7 +250,7 @@ public class BlackBoxParseC1Test {
     public void HTMLIsPlainTextWithInvalidWrongFormatUriTest() {
         String html = "text";
         String uri = "www.googlecom/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head></head>\n" +
                 " <body>\n" +
@@ -273,7 +272,7 @@ public class BlackBoxParseC1Test {
                 "</html>\n";
         String uri = null;
         try {
-            Jsoup.parse(html, uri);
+            Parser.parse(html, uri);
             fail();
         } catch (Exception e) {
             assertTrue(e instanceof IllegalArgumentException);
@@ -292,7 +291,7 @@ public class BlackBoxParseC1Test {
                 "</head>\n" +
                 "</html>\n";
         String uri = "";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
                 "  <meta charset=\"utf-8\">\n" +
@@ -319,7 +318,7 @@ public class BlackBoxParseC1Test {
                 "</head>\n" +
                 "</html>\n";
         String uri = "https://www.google.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
                 "  <meta charset=\"utf-8\">\n" +
@@ -346,7 +345,7 @@ public class BlackBoxParseC1Test {
                 "</head>\n" +
                 "</html>\n";
         String uri = "https://www.googleeeeeee.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
                 "  <meta charset=\"utf-8\">\n" +
@@ -373,7 +372,7 @@ public class BlackBoxParseC1Test {
                 "</head>\n" +
                 "</html>\n";
         String uri = "www.google.com/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
                 "  <meta charset=\"utf-8\">\n" +
@@ -400,7 +399,7 @@ public class BlackBoxParseC1Test {
                 "</head>\n" +
                 "</html>\n";
         String uri = "https://www/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
                 "  <meta charset=\"utf-8\">\n" +
@@ -427,7 +426,7 @@ public class BlackBoxParseC1Test {
                 "</head>\n" +
                 "</html>\n";
         String uri = "www.googlecom/";
-        Document doc = Jsoup.parse(html, uri);
+        Document doc = Parser.parse(html, uri);
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
                 "  <meta charset=\"utf-8\">\n" +
@@ -456,7 +455,7 @@ public class BlackBoxParseC1Test {
         String baseURI = null;
 
         try {
-            Jsoup.parse(html, baseURI);
+            Parser.parse(html, baseURI);
             fail();
         } catch (Exception ex) {
             assertTrue(ex instanceof IllegalArgumentException);
@@ -475,7 +474,7 @@ public class BlackBoxParseC1Test {
                 "</html>\n";
 
         String baseURI = "";
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -503,7 +502,7 @@ public class BlackBoxParseC1Test {
                 "</html>\n";
 
         String baseURI = "https://www.google.com/";
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -531,7 +530,7 @@ public class BlackBoxParseC1Test {
                 "</html>\n";
 
         String baseURI = "https://www.googleeeeeee.com/";
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -559,7 +558,7 @@ public class BlackBoxParseC1Test {
                 "</html>\n";
 
         String baseURI = "www.google.com/";
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -587,7 +586,7 @@ public class BlackBoxParseC1Test {
                 "</html>\n";
 
         String baseURI = "https://www/";
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -615,7 +614,7 @@ public class BlackBoxParseC1Test {
                 "</html>\n";
 
         String baseURI = "https://www.googlecom/";
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -646,7 +645,7 @@ public class BlackBoxParseC1Test {
         String baseURI = null;
 
         try {
-            Jsoup.parse(html, baseURI);
+            Parser.parse(html, baseURI);
             fail();
         } catch (Exception ex) {
             assertTrue(ex instanceof IllegalArgumentException);
@@ -667,7 +666,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -697,7 +696,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "https://www.google.com/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -727,7 +726,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "https://www.googleeeeeee.com/ ";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -757,7 +756,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "www.google.com/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -787,7 +786,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "https://www/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -817,7 +816,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "https://www.googlecom/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -847,7 +846,7 @@ public class BlackBoxParseC1Test {
         String baseURI = null;
 
         try {
-            Jsoup.parse(html, baseURI);
+            Parser.parse(html, baseURI);
             fail();
         } catch (Exception ex) {
             assertTrue(ex instanceof IllegalArgumentException);
@@ -867,7 +866,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -892,7 +891,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "https://www.google.com/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -917,7 +916,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "https://www.googleeeeeee.com/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -942,7 +941,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "www.google.com/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -967,7 +966,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "https://www/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
@@ -992,7 +991,7 @@ public class BlackBoxParseC1Test {
 
         String baseURI = "https://www.googlecom/";
 
-        Document doc = Jsoup.parse(html, baseURI);
+        Document doc = Parser.parse(html, baseURI);
 
         assertEquals(doc.html(), "<html>\n" +
                 " <head> \n" +
