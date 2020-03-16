@@ -1,6 +1,7 @@
 package org.jsoup.parser;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -1001,5 +1002,194 @@ public class BlackBoxParseC1Test {
                 "  <p>text<br>text3</p>   \n" +
                 " </body>\n" +
                 "</html>");
+    }
+
+    @Test
+    public void HTMLWithInValidTagNamesAndNullBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<pipi>text</pipi>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = null;
+
+        try {
+            Parser.parse(html, baseURI);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(ex instanceof IllegalArgumentException);
+        }
+    }
+
+    @Test
+    public void HTMLWithInValidTagNamesAndEmptyBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<pipi>text</pipi>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "";
+
+        Document doc = Parser.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> <pipi>\n" +
+                "   text\n" +
+                "  </pipi>   \n" +
+                " </body>\n" +
+                "</html>");
+        Element pipi = doc.body().select("pipi").first();
+        assertNotNull(pipi);
+    }
+
+    @Test
+    public void HTMLWithInValidTagNamesAndValidExistingBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<pipi>text</pipi>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.google.com/";
+
+        Document doc = Parser.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> <pipi>\n" +
+                "   text\n" +
+                "  </pipi>   \n" +
+                " </body>\n" +
+                "</html>");
+        Element pipi = doc.body().select("pipi").first();
+        assertNotNull(pipi);
+    }
+
+    @Test
+    public void HTMLWithInValidTagNamesAndValidNonExistingBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<pipi>text</pipi>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.googleeeeeee.com/";
+
+        Document doc = Parser.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> <pipi>\n" +
+                "   text\n" +
+                "  </pipi>   \n" +
+                " </body>\n" +
+                "</html>");
+        Element pipi = doc.body().select("pipi").first();
+        assertNotNull(pipi);
+    }
+
+    @Test
+    public void HTMLWithInValidTagNamesAndMissingProtocolBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<pipi>text</pipi>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "www.google.com/";
+
+        Document doc = Parser.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> <pipi>\n" +
+                "   text\n" +
+                "  </pipi>   \n" +
+                " </body>\n" +
+                "</html>");
+        Element pipi = doc.body().select("pipi").first();
+        assertNotNull(pipi);
+    }
+
+    @Test
+    public void HTMLWithInValidTagNamesAndMissingDomainBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<pipi>text</pipi>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www/";
+
+        Document doc = Parser.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> <pipi>\n" +
+                "   text\n" +
+                "  </pipi>   \n" +
+                " </body>\n" +
+                "</html>");
+        Element pipi = doc.body().select("pipi").first();
+        assertNotNull(pipi);
+    }
+
+    @Test
+    public void HTMLWithInValidTagNamesAndWrongFormatBaseURI() {
+        String html = "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "<pipi>text</pipi>\n" +
+                "</body>\n" +
+                "</html>\n";
+
+        String baseURI = "https://www.googlecom/";
+
+        Document doc = Parser.parse(html, baseURI);
+
+        assertEquals(doc.html(), "<html>\n" +
+                " <head> \n" +
+                "  <meta charset=\"utf-8\"> \n" +
+                " </head> \n" +
+                " <body> <pipi>\n" +
+                "   text\n" +
+                "  </pipi>   \n" +
+                " </body>\n" +
+                "</html>");
+        Element pipi = doc.body().select("pipi").first();
+        assertNotNull(pipi);
     }
 }

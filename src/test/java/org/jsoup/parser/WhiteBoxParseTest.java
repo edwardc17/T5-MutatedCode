@@ -145,6 +145,37 @@ public class WhiteBoxParseTest {
     }
 
     @Test
+    public void canParseTagAttribute() {
+        Document doc = Jsoup.parse("<div class=\"container\"> </div> <a href=\"baidu.com\"> </a>");
+        assertEquals("container", doc.selectFirst("div").attr("class"));
+        assertEquals("", doc.selectFirst("div").attr("nonclass"));
+        assertEquals("baidu.com", doc.selectFirst("a").attr("href"));
+    }
+
+    @Test
+    public void canParseTagAttributeCaseSensitive() {
+        Document doc = Jsoup.parse("<div foo=Foo bar=Bar Zoo=zoo yay=\"Yay\"> </div>");
+        assertEquals("Foo", doc.selectFirst("div").attr("foo"));
+        assertEquals("Bar", doc.selectFirst("div").attr("bar"));
+        assertEquals("zoo", doc.selectFirst("div").attr("Zoo"));
+        assertEquals("Yay", doc.selectFirst("div").attr("yay"));
+    }
+
+    @Test
+    public void canParseDuplicationAttributes() {
+        Document doc = Jsoup.parse("<div foo=Foo Foo=foo foo=foo/>");
+        assertEquals("Foo", doc.selectFirst("div").attr("foo"));
+        assertEquals("Foo", doc.selectFirst("div").attr("Foo"));
+    }
+
+    @Test
+    public void canIgnoreIncompleteTag() {
+        Document doc = Jsoup.parse("<div class=\"container\"");
+        assertEquals("", doc.text());
+    }
+
+
+    @Test
     public void canAutoInsertHeadAndHtmlForBodyOnlyHTMLWhenParseInput() {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
         String baseURI = "www.google.com/";
