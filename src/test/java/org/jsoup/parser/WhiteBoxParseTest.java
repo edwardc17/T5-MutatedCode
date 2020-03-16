@@ -2,9 +2,12 @@ package org.jsoup.parser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.junit.Test;
 
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.List;
 
 import static org.jsoup.parser.ParseSettings.preserveCase;
@@ -141,4 +144,109 @@ public class WhiteBoxParseTest {
         assertEquals(1, doc.select("body").size());
     }
 
+    @Test
+    public void canAutoInsertHeadAndHtmlForBodyOnlyHTMLWhenParseInput() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        Document doc = parser.parseInput("<body>  </body>", baseURI);
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canAutoInsertHtmlAndBodyForHeadOnlyHTMLWhenParseInput() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        Document doc = parser.parseInput("<head>  </head>", baseURI);
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canAutoInsertHeadAndBodyForHTMLOnlyHTMLWhenParseInput() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        Document doc = parser.parseInput("<html>  </html>", baseURI);
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canAutoInsertHtmlAndBodyForHeadOnlyHTMLWhenParseInputWithReader() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        String html= "<head>  </head>";
+        Reader inputHtml = new StringReader(html);
+        Document doc = parser.parseInput(inputHtml, baseURI);
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canAutoInsertHeadAndHtmlForBodyOnlyHTMLWhenParseInputWithReader() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        String html= "<body>  </body>";
+        Reader inputHtml = new StringReader(html);
+        Document doc = parser.parseInput(inputHtml, baseURI);
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canAutoInsertHeadAndBodyForHTMLOnlyHTMLWhenParseInputWithReader() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        String html= "<html>  </html>";
+        Reader inputHtml = new StringReader(html);
+        Document doc = parser.parseInput(inputHtml, baseURI);
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canParseFragmentInputWithoutContextProvided() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String fragmentHTML = "<p id=\"myP\"></p>";
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        List<Node> nodes= parser.parseFragmentInput(
+                fragmentHTML, null, baseURI);
+        assertEquals(2, nodes.get(0).childNodeSize());
+        assertEquals("head", nodes.get(0).childNode(0).nodeName());
+        assertEquals("body", nodes.get(0).childNode(1).nodeName());
+    }
+
+    @Test
+    public void canParseFragmentInputWithContextProvided() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String fragmentHTML = "<p id=\"myP\"></p>";
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        Document doc = Parser.parse(fragmentHTML, baseURI);
+        Element context = doc.getElementById("myP");
+        List<Node> nodes= parser.parseFragmentInput(
+                fragmentHTML, context, baseURI);
+        assertEquals(0, nodes.get(0).childNodeSize());
+        assertEquals("p", nodes.get(0).nodeName());
+    }
+
+    @Test
+    public void canGetTreeBuilder() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        Parser parser = new Parser(builder);
+        assertEquals(builder, parser.getTreeBuilder());
+    }
 }
