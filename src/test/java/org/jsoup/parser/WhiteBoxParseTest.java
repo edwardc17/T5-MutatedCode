@@ -24,7 +24,7 @@ public class WhiteBoxParseTest {
     public void canParseFragmentAfterReparent() {
         String html = "<big> test </big><big> test1 </big><big> test2 </big><big> test3 </big>";
         Document doc = Jsoup.parseBodyFragment(html);
-        assertEquals(1, 1);
+        assertEquals(4, doc.select("big").size());
     }
 
 
@@ -102,5 +102,43 @@ public class WhiteBoxParseTest {
         assertEquals("http://hanfa.me", doc.baseUri());
     }
 
+    @Test
+    public void canParseCommentInHTMLFile() {
+        Document doc = Jsoup.parse("<!-- <a> hello </a> --><a>hello</a><!--Another comment -->");
+        assertEquals(1, doc.select("a").size());
+        assertEquals("<a>hello</a>", doc.selectFirst("a").toString());
+    }
+
+    @Test
+    public void canAutoInsertHeadAndBodyForEmptyHTML() {
+        Document doc = Jsoup.parse("");
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canAutoInsertHeadAndBodyForBodyOnlyHTML() {
+        Document doc = Jsoup.parse("<body> bb </body>");
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canAutoInsertHeadAndBodyForHeadOnlyHTML() {
+        Document doc = Jsoup.parse("<head> bb </head>");
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
+
+    @Test
+    public void canAutoInsertHeadAndBodyForHTMLOnlyHTML() {
+        Document doc = Jsoup.parse("<html>  </html>");
+        assertEquals(1, doc.select("html").size());
+        assertEquals(1, doc.select("head").size());
+        assertEquals(1, doc.select("body").size());
+    }
 
 }
