@@ -1,6 +1,7 @@
 package org.jsoup.parser;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -110,6 +111,8 @@ public class WhiteBoxParseTest {
         Document doc = Jsoup.parse("<!-- <a> hello </a> --><a>hello</a><!--Another comment -->");
         assertEquals(1, doc.select("a").size());
         assertEquals("<a>hello</a>", doc.selectFirst("a").toString());
+        assertEquals("\n" + "<!-- <a> hello </a> -->", ((Comment) doc.childNodes().get(0)).toString());
+        assertEquals("<!--Another comment -->", doc.selectFirst("body").childNodes().get(1).toString());
     }
 
     @Test
@@ -174,6 +177,36 @@ public class WhiteBoxParseTest {
         assertEquals("", doc.text());
     }
 
+    @Test
+    public void canParseIncompleteTabWithComment() {
+        Document doc = Jsoup.parse("<div>test<!-- yooo </div> -->");
+        assertEquals("test", doc.text());
+        assertEquals(1, doc.select("div").size());
+    }
+
+    @Test
+    public void canParseIncompleteAttribute() {
+        Document doc = Jsoup.parse("<div href=\"baidu.com >");
+        assertEquals("", doc.text());
+    }
+
+    @Test
+    public void canParseUnterminatedTag() {
+        Document doc = Jsoup.parse("<p>a<textarea>b<p>c");
+        assertEquals(2, doc.select("p").size());
+        assertEquals("ab", doc.select("p").get(0).text());
+        assertEquals("c", doc.select("p").get(1).text());
+        assertEquals(1, doc.select("textarea").size());
+        assertEquals("b", doc.select("textarea").text());
+    }
+
+    @Test
+    public void canParseATagWithRootHref() {
+        Document doc = Jsoup.parse("<a href=/>Test</a>");
+        assertEquals(1, doc.select("a").size());
+        assertEquals("/", doc.selectFirst("a").attr("href"));
+        assertEquals("Test", doc.selectFirst("a").text());
+    }
 
     @Test
     public void canAutoInsertHeadAndHtmlForBodyOnlyHTMLWhenParseInput() {
@@ -213,7 +246,7 @@ public class WhiteBoxParseTest {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
         String baseURI = "www.google.com/";
         Parser parser = new Parser(builder);
-        String html= "<head>  </head>";
+        String html = "<head>  </head>";
         Reader inputHtml = new StringReader(html);
         Document doc = parser.parseInput(inputHtml, baseURI);
         assertEquals(1, doc.select("html").size());
@@ -226,7 +259,7 @@ public class WhiteBoxParseTest {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
         String baseURI = "www.google.com/";
         Parser parser = new Parser(builder);
-        String html= "<body>  </body>";
+        String html = "<body>  </body>";
         Reader inputHtml = new StringReader(html);
         Document doc = parser.parseInput(inputHtml, baseURI);
         assertEquals(1, doc.select("html").size());
@@ -239,7 +272,7 @@ public class WhiteBoxParseTest {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
         String baseURI = "www.google.com/";
         Parser parser = new Parser(builder);
-        String html= "<html>  </html>";
+        String html = "<html>  </html>";
         Reader inputHtml = new StringReader(html);
         Document doc = parser.parseInput(inputHtml, baseURI);
         assertEquals(1, doc.select("html").size());
@@ -253,7 +286,7 @@ public class WhiteBoxParseTest {
         String fragmentHTML = "<p id=\"myP\"></p>";
         String baseURI = "www.google.com/";
         Parser parser = new Parser(builder);
-        List<Node> nodes= parser.parseFragmentInput(
+        List<Node> nodes = parser.parseFragmentInput(
                 fragmentHTML, null, baseURI);
         assertEquals(2, nodes.get(0).childNodeSize());
         assertEquals("head", nodes.get(0).childNode(0).nodeName());
@@ -268,7 +301,7 @@ public class WhiteBoxParseTest {
         Parser parser = new Parser(builder);
         Document doc = Parser.parse(fragmentHTML, baseURI);
         Element context = doc.getElementById("myP");
-        List<Node> nodes= parser.parseFragmentInput(
+        List<Node> nodes = parser.parseFragmentInput(
                 fragmentHTML, context, baseURI);
         assertEquals(0, nodes.get(0).childNodeSize());
         assertEquals("p", nodes.get(0).nodeName());
