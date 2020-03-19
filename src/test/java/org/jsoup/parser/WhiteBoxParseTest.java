@@ -313,4 +313,32 @@ public class WhiteBoxParseTest {
         Parser parser = new Parser(builder);
         assertEquals(builder, parser.getTreeBuilder());
     }
+
+    @Test
+    public void canParseFragmentWithEmptyParseErrorList() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String fragmentHTML = "<p id=\"myP\"></p>";
+        String baseURI = "www.google.com/";
+        Document doc = Parser.parse(fragmentHTML, baseURI);
+        Element context = doc.getElementById("myP");
+        ParseErrorList errors = ParseErrorList.noTracking();
+        List<Node> nodes = Parser.parseFragment(
+                fragmentHTML, context, baseURI, errors);
+        assertEquals(0, nodes.get(0).childNodeSize());
+        assertEquals("p", nodes.get(0).nodeName());
+    }
+
+    @Test
+    public void canParseFragmentWithTrackedParseErrorList() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String fragmentHTML = "<p id=\"myP\"></p>";
+        String baseURI = "www.google.com/";
+        Document doc = Parser.parse(fragmentHTML, baseURI);
+        Element context = doc.getElementById("myP");
+        ParseErrorList errors = ParseErrorList.tracking(20);
+        List<Node> nodes = Parser.parseFragment(
+                fragmentHTML, context, baseURI, errors);
+        assertEquals(0, nodes.get(0).childNodeSize());
+        assertEquals("p", nodes.get(0).nodeName());
+    }
 }
