@@ -11,7 +11,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.List;
 
-import static org.jsoup.parser.ParseSettings.preserveCase;
 import static org.junit.Assert.*;
 
 public class WhiteBoxParseTest {
@@ -98,6 +97,16 @@ public class WhiteBoxParseTest {
         Parser parser = new Parser(treeBuilder);
         Parser newParser = parser.setTreeBuilder(treeBuilder);
         assertNotNull(newParser);
+    }
+
+    @Test
+    public void canSettingsReturnParserForChaining() {
+        HtmlTreeBuilder treeBuilder = new HtmlTreeBuilder();
+        Parser parser = new Parser(treeBuilder);
+        Parser newParser = parser.settings(new ParseSettings(false, false));
+        assertFalse(newParser.settings().preserveTagCase());
+        assertFalse(newParser.settings().preserveAttributeCase());
+        assertEquals(parser, newParser);
     }
 
     @Test
@@ -313,4 +322,36 @@ public class WhiteBoxParseTest {
         Parser parser = new Parser(builder);
         assertEquals(builder, parser.getTreeBuilder());
     }
+
+    // test escape
+    @Test
+    public void canParseEscapeCharactersInAttr() {
+        String fragmentHTML = "<p id=\"a &amp b\"></p><div email=\"fhan&#64andrew.cmu.edu\"> </div>";
+        String baseURI = "www.google.com";
+        Document doc = Parser.parse(fragmentHTML, baseURI);
+
+        assertEquals("a & b", doc.selectFirst("p").attr("id"));
+        assertEquals("fhan@andrew.cmu.edu", doc.selectFirst("div").attr("email"));
+    }
+
+    @Test
+    public void canUnescapeHTMLString() {
+        String fragmentHTML = "<p id=\"a &amp b\"></p><div email=\"fhan&#64andrew.cmu.edu\"> </div>";
+        String doc = Parser.unescapeEntities(fragmentHTML, false);
+        assertEquals("<p id=\"a & b\"></p><div email=\"fhan@andrew.cmu.edu\"> </div>", doc);
+    }
+
+    // builders
+    @Test
+    public void canCreateHTMLParserInstance() {
+        Parser htmlParser = Parser.htmlParser();
+        assertTrue(htmlParser.getTreeBuilder() instanceof HtmlTreeBuilder);
+    }
+
+    @Test
+    public void canCreateXMLParserInstance() {
+        Parser xmlParser = Parser.xmlParser();
+        assertTrue(xmlParser.getTreeBuilder() instanceof XmlTreeBuilder);
+    }
+
 }
