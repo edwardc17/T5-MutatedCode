@@ -243,18 +243,47 @@ public class WhiteBoxTreeBuilderTest {
     }
 
     @Test
-    public void getActiveFormattingElementsReturnNextElementIfHasFormattingElements() {
+    public void canGetActiveFormattingElementsReturnNextElementIfHasFormattingElements() {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
         String fragmentHTML = "<p id=\"myP\"></p>";
         String baseURI = "www.google.com/";
         Parser parser = new Parser(builder);
         Document doc = parser.parseInput(fragmentHTML, baseURI);
         Element el = doc.getElementById("myP");
-        builder.pushActiveFormattingElements(null);
-        Element formatEl = builder.getActiveFormattingElement(null);
+        builder.pushActiveFormattingElements(el);
+        builder.pushActiveFormattingElements(el);
+        Element formatEl = builder.getActiveFormattingElement("p");
         assertEquals("<p id=\"myP\"></p>", formatEl.toString());
     }
 
+    @Test
+    public void canGetActiveFormattingElementsShouldBreakOnNullElementIfHasFormattingElements() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String fragmentHTML = "<p id=\"myP\"></p>";
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        Document doc = parser.parseInput(fragmentHTML, baseURI);
+        Element el = doc.getElementById("myP");
+        builder.pushActiveFormattingElements(el);
+        builder.insertMarkerToFormattingElements();
+        Element formatEl = builder.getActiveFormattingElement("p");
+        assertEquals(null, formatEl.toString());
+    }
 
+    @Test
+    public void canReplaceActiveFormattingElementsShouldBreakOnNullElementIfHasFormattingElements() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        String fragmentHTML = "<p id=\"myP\"></p>\n" +
+                "<a id=\"anA\"></a>";
+        String baseURI = "www.google.com/";
+        Parser parser = new Parser(builder);
+        Document doc = parser.parseInput(fragmentHTML, baseURI);
+        Element elOut = doc.getElementById("myP");
+        Element elIn = doc.getElementById("anA");
+        builder.pushActiveFormattingElements(elOut);
+        assertTrue(builder.isInActiveFormattingElements(elOut));
+        builder.replaceActiveFormattingElement(elOut, elIn);
+        assertTrue(builder.isInActiveFormattingElements(elIn));
+    }
 
 }
