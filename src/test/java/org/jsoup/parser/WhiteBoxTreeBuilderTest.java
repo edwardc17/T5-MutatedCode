@@ -214,76 +214,175 @@ public class WhiteBoxTreeBuilderTest {
     }
 
     @Test
-    public void htmlTreeBuilderToStringGivesDesiredFormattedString() {
-//        HtmlTreeBuilder builder = new HtmlTreeBuilder();
-//        System.out.println(builder.stack.size());
-//        String fragmentHTML = "<p id=\"myP\"></p>";
-//        String baseURI = "www.google.com/";
-////        Parser parser = new Parser(builder);
-////        Document doc = Parser.parse(fragmentHTML, baseURI);
-////        Reader inputHtml = new StringReader(fragmentHTML);
-////        builder.initialiseParse(inputHtml, baseURI, parser);
-//        List<Node> nodes = Parser.parseFragment(
-//                fragmentHTML, null, baseURI);
-//        Element el = nodes.get(0).ownerDocument().getElementById("myP");
-//        //builder.push(el);
-//        System.out.println(el);
-//        System.out.println(builder.stack == null);
+    public void tagInListItemScope() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "", Parser.htmlParser());
+        assertFalse(builder.inListItemScope("p"));
+        builder.insertStartTag("html");
+        assertFalse(builder.inListItemScope("p"));
+        builder.insert(new Element("ul"));
+        assertFalse(builder.inListItemScope("p"));
+        builder.insert(new Element("p"));
+        assertTrue(builder.inListItemScope("p"));
     }
 
     @Test
-    public void getActiveFormattingElementsReturnNullIfNoFormattingElements() {
+    public void elementInSelectScope() {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
-        String fragmentHTML = "<p id=\"myP\"></p>";
-        String baseURI = "www.google.com/";
-        Parser parser = new Parser(builder);
-        parser.parseInput(fragmentHTML, baseURI);
-        Element el = builder.getActiveFormattingElement("p");
-        assertNull(el);
+        builder.initialiseParse(new StringReader(""),
+                "", Parser.htmlParser());
+        builder.insertStartTag("start");
+        builder.insert(new Element("p"));
+        builder.insert(new Element("li"));
+        assertTrue(builder.inSelectScope("li"));
+        assertFalse(builder.inSelectScope("a"));
+    }
+
+    @Test (expected = IllegalArgumentException.class)
+    public void elementInNotReachableSelectScope() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "", Parser.htmlParser());
+        builder.insertStartTag("option");
+        builder.inSelectScope("a");
     }
 
     @Test
-    public void canGetActiveFormattingElementsReturnNextElementIfHasFormattingElements() {
+    public void canGetHeadElement() {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
-        String fragmentHTML = "<p id=\"myP\"></p>";
-        String baseURI = "www.google.com/";
-        Parser parser = new Parser(builder);
-        Document doc = parser.parseInput(fragmentHTML, baseURI);
-        Element el = doc.getElementById("myP");
+        builder.initialiseParse(new StringReader(""),
+                "", Parser.htmlParser());
+        builder.insertStartTag("start");
+        assertNull(builder.getHeadElement());
+        builder.setHeadElement(new Element("head"));
+        assertEquals("head", builder.getHeadElement().normalName());
+    }
+
+    @Test
+    public void canGenerateImpliedEndTags() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "", Parser.htmlParser());
+        builder.insertStartTag("start");
+        builder.insert(new Element("p"));
+        builder.insert(new Element("li"));
+        assertEquals(3, builder.stack.size());
+        builder.generateImpliedEndTags("p");
+        assertEquals(2, builder.stack.size());
+        assertEquals("p", builder.stack.get(
+                builder.stack.size()-1).normalName());
+
+    }
+
+    @Test
+    public void canPushActiveFormattingElements() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "", Parser.htmlParser());
+        builder.insertStartTag("start");
+        Element el = new Element("p");
+        assertNull(builder.getActiveFormattingElement(
+                "p"));
         builder.pushActiveFormattingElements(el);
         builder.pushActiveFormattingElements(el);
-        Element formatEl = builder.getActiveFormattingElement("p");
-        assertEquals("<p id=\"myP\"></p>", formatEl.toString());
-    }
-
-    @Test
-    public void canGetActiveFormattingElementsShouldBreakOnNullElementIfHasFormattingElements() {
-        HtmlTreeBuilder builder = new HtmlTreeBuilder();
-        String fragmentHTML = "<p id=\"myP\"></p>";
-        String baseURI = "www.google.com/";
-        Parser parser = new Parser(builder);
-        Document doc = parser.parseInput(fragmentHTML, baseURI);
-        Element el = doc.getElementById("myP");
+        builder.pushActiveFormattingElements(el);
         builder.pushActiveFormattingElements(el);
         builder.insertMarkerToFormattingElements();
-        Element formatEl = builder.getActiveFormattingElement("p");
-        assertEquals(null, formatEl.toString());
+        builder.pushActiveFormattingElements(el);
+        assertEquals("<p></p>",
+                builder.removeLastFormattingElement().toString());
+        assertNull(builder.removeLastFormattingElement());
+        assertEquals("<p></p>",
+                builder.removeLastFormattingElement().toString());
+        assertEquals("<p></p>",
+                builder.removeLastFormattingElement().toString());
+        assertEquals("<p></p>",
+                builder.removeLastFormattingElement().toString());
+        assertNull(builder.removeLastFormattingElement());
+    }
+
+    @Test
+    public void canReconstructFormattingElements() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "", Parser.htmlParser());
+        builder.insertStartTag("start");
+        Element elOut = new Element("p");
+        Element elIn = new Element("a");
+        builder.pushActiveFormattingElements(elOut);
+        builder.pushActiveFormattingElements(elIn);
+        assertEquals("<p></p>",
+                builder.getActiveFormattingElement(
+                        "p").toString());
+        builder.reconstructFormattingElements();
+        assertEquals("<p><a></a></p>",
+                builder.getActiveFormattingElement(
+                        "p").toString());
+
     }
 
     @Test
     public void canReplaceActiveFormattingElementsShouldBreakOnNullElementIfHasFormattingElements() {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
-        String fragmentHTML = "<p id=\"myP\"></p>\n" +
-                "<a id=\"anA\"></a>";
-        String baseURI = "www.google.com/";
-        Parser parser = new Parser(builder);
-        Document doc = parser.parseInput(fragmentHTML, baseURI);
-        Element elOut = doc.getElementById("myP");
-        Element elIn = doc.getElementById("anA");
+        builder.initialiseParse(new StringReader(""),
+                "",
+                Parser.htmlParser());
+        Element elOut = new Element("p");
+        Element elIn = new Element("a");
         builder.pushActiveFormattingElements(elOut);
         assertTrue(builder.isInActiveFormattingElements(elOut));
         builder.replaceActiveFormattingElement(elOut, elIn);
         assertTrue(builder.isInActiveFormattingElements(elIn));
     }
 
+    @Test
+    public void canGetActiveFormattingElementsShouldBreakOnNullElementIfHasFormattingElements() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "",
+                Parser.htmlParser());
+        Element el = new Element("p");
+        builder.pushActiveFormattingElements(el);
+        builder.insertMarkerToFormattingElements();
+        Element formatEl = builder.getActiveFormattingElement(
+                "p");
+        assertEquals(null, formatEl.toString());
+    }
+
+    @Test
+    public void canGetActiveFormattingElementsReturnNextElementIfHasFormattingElements() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "",
+                Parser.htmlParser());
+        Element el = new Element("p");
+        builder.pushActiveFormattingElements(el);
+        builder.pushActiveFormattingElements(el);
+        Element formatEl = builder.getActiveFormattingElement(
+                "p");
+        assertEquals("<p></p>", formatEl.toString());
+    }
+
+    @Test
+    public void getActiveFormattingElementsReturnNullIfNoFormattingElements() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "",
+                Parser.htmlParser());
+        Element el = builder.getActiveFormattingElement(
+                "p");
+        assertNull(el);
+    }
+
+    @Test
+    public void htmlTreeBuilderToStringGivesDesiredFormattedString() {
+        HtmlTreeBuilder builder = new HtmlTreeBuilder();
+        builder.initialiseParse(new StringReader(""),
+                "", Parser.htmlParser());
+        builder.insertStartTag("start");
+        assertEquals("TreeBuilder{currentToken=null, " +
+                "state=Initial, currentElement=<start></start>}",
+                builder.toString());
+    }
 }
