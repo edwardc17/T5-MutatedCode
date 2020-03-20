@@ -1,10 +1,7 @@
 package org.jsoup.parser;
 
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Comment;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
+import org.jsoup.nodes.*;
 import org.junit.Test;
 
 import java.io.Reader;
@@ -357,7 +354,6 @@ public class WhiteBoxParseTest {
 
     @Test
     public void canParseFragmentWithEmptyParseErrorList() {
-        HtmlTreeBuilder builder = new HtmlTreeBuilder();
         String fragmentHTML = "<p id=\"myP\"></p>";
         String baseURI = "www.google.com/";
         Document doc = Parser.parse(fragmentHTML, baseURI);
@@ -371,7 +367,6 @@ public class WhiteBoxParseTest {
 
     @Test
     public void canParseFragmentWithTrackedParseErrorList() {
-        HtmlTreeBuilder builder = new HtmlTreeBuilder();
         String fragmentHTML = "<p id=\"myP\"></p>";
         String baseURI = "www.google.com/";
         Document doc = Parser.parse(fragmentHTML, baseURI);
@@ -381,5 +376,21 @@ public class WhiteBoxParseTest {
                 fragmentHTML, context, baseURI, errors);
         assertEquals(0, nodes.get(0).childNodeSize());
         assertEquals("p", nodes.get(0).nodeName());
+    }
+
+
+    @Test
+    public void canParseElementsInForm() {
+        String fragment = "<form action=\"/action_page.php\">\n" +
+                "  <label for=\"fname\">First name:</label><br>\n" +
+                "  <input type=\"text\" id=\"fname\" name=\"fname\" value=\"John\"><br>\n" +
+                "  <label for=\"lname\">Last name:</label><br>\n" +
+                "  <input type=\"text\" id=\"lname\" name=\"lname\" value=\"Doe\"><br><br>\n" +
+                "  <input type=\"submit\" value=\"Submit\">\n" +
+                "</form>";
+
+        Document doc = Parser.parse(fragment, "baidu.com");
+        assertEquals(1, doc.select("form").size());
+        assertEquals(3, ((FormElement) doc.select("form").first()).elements().size());
     }
 }
