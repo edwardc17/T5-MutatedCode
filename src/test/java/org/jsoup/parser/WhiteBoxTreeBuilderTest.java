@@ -28,7 +28,7 @@ public class WhiteBoxTreeBuilderTest {
         Element spyContext = spy(context);
         builder.parseFragment(fragment, spyContext, baseURI,
                 new Parser(builder));
-        verify(spyContext, times(1)).ownerDocument();
+        verify(spyContext, times(2)).ownerDocument();
     }
     
     
