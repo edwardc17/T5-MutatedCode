@@ -56,7 +56,7 @@ public class WhiteBoxTreeBuilderTest {
         Document doc = Parser.parse("<div class=child1>", "");
         builder.parseFragment(fragment, doc.select("div.child1").first(), baseURI,
                 new Parser(builder));
-        assertEquals("www.google.com", builder.getBaseUri());
+        assertEquals("www.google.com/", builder.getBaseUri());
     }
 
     @Test
@@ -93,124 +93,6 @@ public class WhiteBoxTreeBuilderTest {
         assertEquals(2, nodes.size());
         assertEquals("<unknown />", nodes.get(0).toString());
         assertEquals("<anotherunknown />", nodes.get(1).toString());
-    }
-
-
-
-    @Test
-    public void notCovered() {
-//        HtmlTreeBuilder builder = new HtmlTreeBuilder();
-        // line 99, 101, 103, 105, 107, 122-123 uncovered
-        //builder.parseFragment();
-        
-        //line 150
-        //builder.state(); ok
-
-        //line 174
-        //builder.getBaseUri(); ok
-
-        //line 196
-        //builder.error(builder.state()); ok
-
-        //line 211-215
-        //builder.insert(startTag); ok
-
-        //line 239-244
-        //builder.insertEmpty();
-
-        //line 250-256
-        //builder.insertForm(); OK
-
-        //line 271, 273
-        //builder.insert(charToken);
-
-        //line 291
-        //builder.insert(node);
-
-        //line 300
-        //builder.push();
-
-        //line 319
-        //builder.isElementInQueue();
-
-        //line 322 Mutant 4
-        //builder.getFromStack();
-
-        //line 329
-        //builder.getFromStack();
-
-        //line 333-340 Mutant8
-        // originally return false *********************
-        //builder.removeFromStack();
-
-        //line 363-371
-        //builder.popStackToBefore();
-
-        //line 389, 391
-        //builder.clearStackToTableContext();
-
-        //line 396-403
-        //builder.aboveOnStack();
-
-        //line 407-409 Mutant 9 *********************
-        //builder.insertOnStackAfter();
-
-        //line 411
-        //builder.replaceOnStack();
-
-        //line 416-419 private replaceInQueue(),
-        //used at line 706-707
-        //builder.replaceActiveFormattingElement();
-
-        //line 430-462, except 454-456
-        //builder.resetInsertionMode();
-
-        //line 491, 494 private
-
-        //line 511
-        //builder.inListItemScope();
-
-        //line 524-533
-        //builder.inSelectScope();
-
-        //line 540
-//        builder.getHeadElement();
-
-        //line 552
-//        builder.getFormElement();
-
-        //line 556
-        //builder.setFormElement();
-
-        //line 579-580
-        //builder.generateImpliedEndTags(excludeTag);
-
-        //line 603
-//        builder.removeLastFormattingElement();
-
-        //line 610-619 will cover 628-630 isSameFormattingElement
-        //builder.pushActiveFormattingElements(in);
-
-        //line 639-670
-        //builder.reconstructFormattingElements();
-
-        //line 677
-//        builder.clearFormattingElementsToLastMarker();
-
-        //line 690
-        //builder.isInActiveFormattingElements(element);
-
-        //line 698 Mutant 10 *********************
-        //builder.getActiveFormattingElement(nodeName);
-
-        //line 706-707 Mentioned above
-
-        //line 722, 724, 732
-        //builder.insertInFosterParent(nodeIn);
-        // ISSUE, NO SIDE EFFECT
-
-        //line 737, 740
-//        builder.toString();
     }
 
     @Test
@@ -323,7 +205,7 @@ public class WhiteBoxTreeBuilderTest {
     }
 
     @Test
-    public void canReplaceActiveFormattingElementsShouldBreakOnNullElementIfHasFormattingElements() {
+    public void canReplaceActiveFormattingElements() {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
         builder.initialiseParse(new StringReader(""),
                 "",
@@ -334,10 +216,11 @@ public class WhiteBoxTreeBuilderTest {
         assertTrue(builder.isInActiveFormattingElements(elOut));
         builder.replaceActiveFormattingElement(elOut, elIn);
         assertTrue(builder.isInActiveFormattingElements(elIn));
+        assertFalse(builder.isInActiveFormattingElements(elOut));
     }
 
     @Test
-    public void canGetActiveFormattingElementsShouldBreakOnNullElementIfHasFormattingElements() {
+    public void getActiveFormattingElementsShouldBreakOnNullElementIfHasFormattingElements() {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
         builder.initialiseParse(new StringReader(""),
                 "",
@@ -347,11 +230,11 @@ public class WhiteBoxTreeBuilderTest {
         builder.insertMarkerToFormattingElements();
         Element formatEl = builder.getActiveFormattingElement(
                 "p");
-        assertEquals(null, formatEl.toString());
+        assertEquals(null, formatEl);
     }
 
     @Test
-    public void canGetActiveFormattingElementsReturnNextElementIfHasFormattingElements() {
+    public void getActiveFormattingElementsReturnNextElementIfHasFormattingElements() {
         HtmlTreeBuilder builder = new HtmlTreeBuilder();
         builder.initialiseParse(new StringReader(""),
                 "",
